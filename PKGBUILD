@@ -7,8 +7,8 @@ pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd')
 optdepends=('bash-completion: bash completion support')
-pkgver=2.33.1
-pkgrel=2
+pkgver=2.34
+pkgrel=1
 arch=('x86_64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -16,10 +16,8 @@ makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'p
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
-source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
-        '0001-dirs-improve-identification-of-Arch-Linux-like-syste.patch')
-sha256sums=('ac36fc0093c3eb3eaf2158db3ad3a26114903724d6cb98b7068fe45d6b440d94'
-           '8f3d31705c1d32f5b199c0794f03acf40e2eb8e0c54fb5cb49831fdbfe5aaf80')
+source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+sha256sums=('4cac750598bd0f06091a93d61c7df0f2e117b276eecb10cd9c243a09d670739a')
 
 _gourl=github.com/snapcore/snapd
 
@@ -34,8 +32,6 @@ prepare() {
   # above describes.
   mkdir -p "$(dirname "$GOPATH/src/${_gourl}")"
   ln --no-target-directory -fs "$srcdir/$pkgname-$pkgver" "$GOPATH/src/${_gourl}"
-
-  patch -Np1 -i "$srcdir/0001-dirs-improve-identification-of-Arch-Linux-like-syste.patch"
 }
 
 build() {
