@@ -1,5 +1,6 @@
-# Maintainer: aimileus <me at aimileus dot nl>
-# Maintainer: Maciej Borzecki <maciek.borzecki@gmail.com>
+# Maintainer: Philip Müller <philm at manjaro dot org>
+# Contributor: aimileus <me at aimileus dot nl>
+# Contributor: Maciej Borzecki <maciek.borzecki@gmail.com>
 # Contributor: Timothy Redaelli <timothy.redaelli@gmail.com>
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
@@ -7,7 +8,7 @@ pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd')
 optdepends=('bash-completion: bash completion support')
-pkgver=2.34
+pkgver=2.34.3
 pkgrel=1
 arch=('x86_64')
 url="https://github.com/snapcore/snapd"
@@ -17,7 +18,7 @@ conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
 source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('4cac750598bd0f06091a93d61c7df0f2e117b276eecb10cd9c243a09d670739a')
+sha256sums=('aa01db921503cdcdf30d34dd42b0fb6083f9374b1bf3b6a54401ac192a38118e')
 
 _gourl=github.com/snapcore/snapd
 
