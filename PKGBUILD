@@ -6,19 +6,19 @@
 
 pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
-depends=('squashfs-tools' 'libseccomp' 'libsystemd')
+depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support')
-pkgver=2.35.5
-pkgrel=2
-arch=('x86_64')
+pkgver=2.36.2
+pkgrel=1.0
+arch=('x86_64' 'i686')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
-makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'python-docutils')
+makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'python-docutils' 'apparmor')
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
 source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('b2ed878ecceca27cc780a1ab6e8bf426bb20999e08b6f75e3a56caf7f90ccd1d')
+sha256sums=('5127c5df7b1c0b322d410d6780272912345aa135f8aed0bd3c11763076a4450a')
 
 _gourl=github.com/snapcore/snapd
 
@@ -50,8 +50,8 @@ build() {
   # because argument expansion with quoting in bash is hard, and -ldflags=-extldflags='-foo'
   # is not exactly the same as -ldflags "-extldflags '-foo'" use the array trick
   # to pass exactly what we want
-  flags=(-buildmode=pie -ldflags "-extldflags '$LDFLAGS'")
-  staticflags=(-buildmode=pie -ldflags "-extldflags '$LDFLAGS -static'")
+  flags=(-buildmode=pie -ldflags "-s -extldflags '$LDFLAGS'")
+  staticflags=(-buildmode=pie -ldflags "-s -extldflags '$LDFLAGS -static'")
   # Build/install snap and snapd
   go build "${flags[@]}" -o "$GOPATH/bin/snap" "${_gourl}/cmd/snap"
   go build "${flags[@]}" -o "$GOPATH/bin/snapctl" "${_gourl}/cmd/snapctl"
@@ -77,7 +77,7 @@ build() {
     --prefix=/usr \
     --libexecdir=/usr/lib/snapd \
     --with-snap-mount-dir=/var/lib/snapd/snap \
-    --disable-apparmor \
+    --enable-apparmor \
     --enable-nvidia-biarch \
     --enable-merged-usr
   make $MAKEFLAGS
@@ -90,7 +90,7 @@ package() {
 
   # Install bash completion
   install -Dm644 data/completion/snap \
-    "$pkgdir/usr/share/bash-completion/completion/snap"
+    "$pkgdir/usr/share/bash-completion/completions/snap"
   install -Dm644 data/completion/complete.sh \
     "$pkgdir/usr/lib/snapd/complete.sh"
   install -Dm644 data/completion/etelpmoc.sh \
@@ -120,6 +120,7 @@ package() {
   # pre-create directories
   install -dm755 "$pkgdir/var/lib/snapd/snap"
   install -dm755 "$pkgdir/var/cache/snapd"
+  install -dm755 "$pkgdir/var/lib/snapd/apparmor"
   install -dm755 "$pkgdir/var/lib/snapd/assertions"
   install -dm755 "$pkgdir/var/lib/snapd/desktop/applications"
   install -dm755 "$pkgdir/var/lib/snapd/device"
@@ -138,9 +139,6 @@ package() {
   install -dm700 "$pkgdir/var/lib/snapd/cache"
 
   make -C cmd install DESTDIR="$pkgdir/"
-  # move snapd-generator to systemd generators
-  install -dm755 "$pkgdir/usr/lib/systemd/system-generators"
-  mv "$pkgdir/usr/lib/snapd/snapd-generator" "$pkgdir/usr/lib/systemd/system-generators/"
 
   # Install man file
   mkdir -p "$pkgdir/usr/share/man/man1"
@@ -159,6 +157,4 @@ package() {
   rm -fv "$pkgdir/usr/lib/snapd/snapd.core-fixup.sh"
   rm -fv "$pkgdir/usr/bin/ubuntu-core-launcher"
   rm -fv "$pkgdir/usr/lib/snapd/system-shutdown"
-  # apparmor bits
-  rm -rfv "$pkgdir"/var/lib/snapd/apparmor
 }
