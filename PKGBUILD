@@ -9,7 +9,7 @@ pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support')
 pkgver=2.39.2
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -17,13 +17,16 @@ makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'p
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
-source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('a938b0175070e3c9095d344f33cd39b4e122d9b98830f5a032da2679457895e8')
+source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
+        https://patch-diff.githubusercontent.com/raw/snapcore/snapd/pull/6998.patch)
+sha256sums=('a938b0175070e3c9095d344f33cd39b4e122d9b98830f5a032da2679457895e8'
+            '2457c614231d75beb7f45cd61137e1b7c74fda0e591a70446c1860b5a5435294')
 
 _gourl=github.com/snapcore/snapd
 
 prepare() {
   cd "$pkgname-$pkgver"
+  patch -Np1 -i "$srcdir/6998.patch"
 
   export GOPATH="$srcdir/go"
   mkdir -p "$GOPATH"
@@ -69,7 +72,7 @@ build() {
        BINDIR=/bin \
        LIBEXECDIR=/usr/lib \
        SYSTEMDSYSTEMUNITDIR=/usr/lib/systemd/system \
-       SNAP_MOUNT_DIR=/var/lib/snapd/snap \
+       SNAP_MOUNT_DIR=/snap \
        SNAPD_ENVIRONMENT_FILE=/etc/default/snapd
 
   cd cmd
@@ -77,7 +80,7 @@ build() {
   ./configure \
     --prefix=/usr \
     --libexecdir=/usr/lib/snapd \
-    --with-snap-mount-dir=/var/lib/snapd/snap \
+    --with-snap-mount-dir=/snap \
     --enable-apparmor \
     --enable-nvidia-biarch \
     --enable-merged-usr
