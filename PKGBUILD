@@ -1,4 +1,5 @@
 # Maintainer: Philip Müller <philm at manjaro dot org>
+# Maintainer: Helmut Stult <helmut at manjaro dot org>
 # Contributor: aimileus <me at aimileus dot nl>
 # Contributor: Maciej Borzecki <maciek.borzecki@gmail.com>
 # Contributor: Timothy Redaelli <timothy.redaelli@gmail.com>
@@ -8,8 +9,8 @@ pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support')
-pkgver=2.39.2
-pkgrel=4
+pkgver=2.39.3
+pkgrel=1
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -19,14 +20,14 @@ options=('!strip' 'emptydirs')
 install=snapd.install
 source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
         https://github.com/snapcore/snapd/commit/1ce7a410f2bf15b7d2fa34dfbaa77b3810069520.patch)
-sha256sums=('a938b0175070e3c9095d344f33cd39b4e122d9b98830f5a032da2679457895e8'
-            'd5f16f45cf24d4f3a17d6e3fd8863d794203b73d7727fe3eba702ac61dd6bf95')
+sha256sums=('035c75b14ec3347b5953076ff763d2ab3306c1bd8f689806675995054faf53fe'
+           'd5f16f45cf24d4f3a17d6e3fd8863d794203b73d7727fe3eba702ac61dd6bf95')
 
 _gourl=github.com/snapcore/snapd
 
 prepare() {
   cd "$pkgname-$pkgver"
-  patch -Np1 -i "$srcdir/1ce7a410f2bf15b7d2fa34dfbaa77b3810069520.patch"
+#  patch -Np1 -i "$srcdir/1ce7a410f2bf15b7d2fa34dfbaa77b3810069520.patch"
 
   export GOPATH="$srcdir/go"
   mkdir -p "$GOPATH"
