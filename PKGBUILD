@@ -9,8 +9,8 @@ pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support')
-pkgver=2.39.3
-pkgrel=3
+pkgver=2.40
+pkgrel=1
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -18,20 +18,13 @@ makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'p
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
-source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
-        https://github.com/snapcore/snapd/commit/1ce7a410f2bf15b7d2fa34dfbaa77b3810069520.patch
-        https://github.com/snapcore/snapd/pull/7051/commits/487299903ec3204ab8b194d7c6d0f7f398ab36e6.patch)
-sha256sums=('035c75b14ec3347b5953076ff763d2ab3306c1bd8f689806675995054faf53fe'
-            'd5f16f45cf24d4f3a17d6e3fd8863d794203b73d7727fe3eba702ac61dd6bf95'
-            '662d18e68a99fe50a5cbd95b16b1a42b6bdfcb0c62edf60cf578794826e4d6f1')
+source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+sha256sums=('5a1c946c6c7042b7436ca6accff8bb7b30a80b57ac1b84ce04b9a24f7b395fd1')
 
 _gourl=github.com/snapcore/snapd
 
 prepare() {
   cd "$pkgname-$pkgver"
-  # patch needed to provide overlayfs for Manjaro
-  patch -Np1 -i "$srcdir/1ce7a410f2bf15b7d2fa34dfbaa77b3810069520.patch"
-  patch -Np1 -i "$srcdir/487299903ec3204ab8b194d7c6d0f7f398ab36e6.patch"
 
   export GOPATH="$srcdir/go"
   mkdir -p "$GOPATH"
