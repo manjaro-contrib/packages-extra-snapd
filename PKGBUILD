@@ -11,7 +11,7 @@ pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support')
-pkgver=2.42.2
+pkgver=2.42.4
 pkgrel=1
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -21,7 +21,7 @@ conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
 source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('7779c21b4a3bbeaacec1da57140ad358447b099818cb6840bdff8e73a59d3286')
+sha256sums=('f6b23d6f64202094c2a2751fa50d1880246ad85dcef1097bf848c8bf3d63a430')
 
 _gourl=github.com/snapcore/snapd
 
