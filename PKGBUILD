@@ -12,7 +12,7 @@ pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support')
 pkgver=2.43.3
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -166,4 +166,8 @@ package() {
 
   # add /snap symlink
   ln -s /var/lib/snapd/snap "$pkgdir/snap"
+
+  # fix some permissions
+  chmod 0750 "$pkgdir/etc/sudoers.d"
+  chmod 0440 "$pkgdir/etc/sudoers.d/99-snapd.conf"
 }
