@@ -10,8 +10,9 @@
 pkgname=snapd
 pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
-optdepends=('bash-completion: bash completion support')
-pkgver=2.45
+optdepends=('bash-completion: bash completion support'
+            'xdg-desktop-portal: desktop integration')
+pkgver=2.45.1
 pkgrel=1
 arch=('x86_64' 'i686' 'armv7h' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -20,8 +21,10 @@ makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'p
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
+# 0001-fontconfig-compat.patch: proposed upstream https://github.com/snapcore/snapd/pull/8604
+# 0002-zsh-completion.patch: cherry-pick from upstream master
 source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('54399873d874d3797784ff685e2b21840751d77ccfada6292b34060d58ee4256')
+sha256sums=('9e289f3dd1c73b651c27fc3b6b2339660335c6c5c9261ef0fa2975c1c849bf66')
 
 _gourl=github.com/snapcore/snapd
 
@@ -36,11 +39,22 @@ prepare() {
   # above describes.
   mkdir -p "$(dirname "$GOPATH/src/${_gourl}")"
   ln --no-target-directory -fs "$srcdir/$pkgname-$pkgver" "$GOPATH/src/${_gourl}"
+
+  for name in "${source[@]}"; do
+      if [[ "${name%.patch}" == "$name" ]]; then
+          # not a patch
+          continue
+      fi
+      msg2 "applying $name"
+      patch -p1 -i "$srcdir/$name"
+  done
 }
 
 build() {
   cd "$pkgname-$pkgver"
   export GOPATH="$srcdir/go"
+  # snapd does not support modules yet, explicitly disable Go modules
+  export GO111MODULE=off
 
   export CGO_ENABLED="1"
   export CGO_CFLAGS="${CFLAGS}"
@@ -56,15 +70,14 @@ build() {
   flags=(-buildmode=pie -ldflags "-s -extldflags '$LDFLAGS'")
   staticflags=(-buildmode=pie -ldflags "-s -extldflags '$LDFLAGS -static'")
   # Build/install snap and snapd
-  go build "${flags[@]}" -o "$GOPATH/bin/snap" "${_gourl}/cmd/snap"
-  go build "${flags[@]}" -o "$GOPATH/bin/snapctl" "${_gourl}/cmd/snapctl"
-  go build "${flags[@]}" -o "$GOPATH/bin/snapd" "${_gourl}/cmd/snapd"
-  go build "${flags[@]}" -o "$GOPATH/bin/snap-seccomp" "${_gourl}/cmd/snap-seccomp"
-  go build "${flags[@]}" -o "$GOPATH/bin/snap-failure" "${_gourl}/cmd/snap-failure"
+  go build "${flags[@]}" -o "$srcdir/go/bin/snap" "${_gourl}/cmd/snap"
+  go build "${flags[@]}" -o "$srcdir/go/bin/snapd" "${_gourl}/cmd/snapd"
+  go build "${flags[@]}" -o "$srcdir/go/bin/snap-seccomp" "${_gourl}/cmd/snap-seccomp"
+  go build "${flags[@]}" -o "$srcdir/go/bin/snap-failure" "${_gourl}/cmd/snap-failure"
   # build snap-exec and snap-update-ns completely static for base snaps
-  go build "${staticflags[@]}" -o "$GOPATH/bin/snap-update-ns" "${_gourl}/cmd/snap-update-ns"
-  go build "${staticflags[@]}" -o "$GOPATH/bin/snap-exec" "${_gourl}/cmd/snap-exec"
-  go build "${staticflags[@]}" -o "$GOPATH/bin/snapctl" "${_gourl}/cmd/snapctl"
+  go build "${staticflags[@]}" -o "$srcdir/go/bin/snap-update-ns" "${_gourl}/cmd/snap-update-ns"
+  go build "${staticflags[@]}" -o "$srcdir/go/bin/snap-exec" "${_gourl}/cmd/snap-exec"
+  go build "${staticflags[@]}" -o "$srcdir/go/bin/snapctl" "${_gourl}/cmd/snapctl"
 
   # Generate data files such as real systemd units, dbus service, environment
   # setup helpers out of the available templates
@@ -87,18 +100,33 @@ build() {
   make $MAKEFLAGS
 }
 
+check() {
+    export GOPATH="$srcdir/go"
+    cd "$srcdir/go/src/${_gourl}"
+
+    # make sure the binaries that need to be built statically really are
+    for binary in snap-exec snap-update-ns snapctl; do
+        LC_ALL=C ldd "$srcdir/go/bin/$binary" 2>&1 | grep -q 'not a dynamic executable'
+    done
+}
 
 package() {
   cd "$pkgname-$pkgver"
   export GOPATH="$srcdir/go"
+  # snapd does not use modules, setting GO111MODULE=on in the environment breaks
+  # the build
+  unset GO111MODULE
 
   # Install bash completion
-  install -Dm644 data/completion/snap \
+  install -Dm644 data/completion/bash/snap \
     "$pkgdir/usr/share/bash-completion/completions/snap"
-  install -Dm644 data/completion/complete.sh \
+  install -Dm644 data/completion/bash/complete.sh \
     "$pkgdir/usr/lib/snapd/complete.sh"
-  install -Dm644 data/completion/etelpmoc.sh \
+  install -Dm644 data/completion/bash/etelpmoc.sh \
     "$pkgdir/usr/lib/snapd/etelpmoc.sh"
+  # Install zsh completion
+  install -Dm644 data/completion/zsh/_snap \
+    "$pkgdir/usr/share/zsh/site-functions/_snap"
 
   # Install systemd units, dbus services and a script for environment variables
   make -C data/ install \
@@ -107,20 +135,22 @@ package() {
      SYSTEMDSYSTEMUNITDIR=/usr/lib/systemd/system \
      SNAP_MOUNT_DIR=/var/lib/snapd/snap \
      DESTDIR="$pkgdir"
+  # no tweaks for sudo are needed
+  rm -rfv "$pkgdir/etc/sudoers.d"
 
   # Install polkit policy
   install -Dm644 data/polkit/io.snapcraft.snapd.policy \
     "$pkgdir/usr/share/polkit-1/actions/io.snapcraft.snapd.policy"
 
   # Install executables
-  install -Dm755 "$GOPATH/bin/snap" "$pkgdir/usr/bin/snap"
-  install -Dm755 "$GOPATH/bin/snapctl" "$pkgdir/usr/lib/snapd/snapctl"
-  install -Dm755 "$GOPATH/bin/snapd" "$pkgdir/usr/lib/snapd/snapd"
-  install -Dm755 "$GOPATH/bin/snap-seccomp" "$pkgdir/usr/lib/snapd/snap-seccomp"
-  install -Dm755 "$GOPATH/bin/snap-failure" "$pkgdir/usr/lib/snapd/snap-failure"
-  install -Dm755 "$GOPATH/bin/snap-update-ns" "$pkgdir/usr/lib/snapd/snap-update-ns"
-  install -Dm755 "$GOPATH/bin/snap-exec" "$pkgdir/usr/lib/snapd/snap-exec"
-  # snapctl is run from inside the snap
+  install -Dm755 "$srcdir/go/bin/snap" "$pkgdir/usr/bin/snap"
+  install -Dm755 "$srcdir/go/bin/snapctl" "$pkgdir/usr/lib/snapd/snapctl"
+  install -Dm755 "$srcdir/go/bin/snapd" "$pkgdir/usr/lib/snapd/snapd"
+  install -Dm755 "$srcdir/go/bin/snap-seccomp" "$pkgdir/usr/lib/snapd/snap-seccomp"
+  install -Dm755 "$srcdir/go/bin/snap-failure" "$pkgdir/usr/lib/snapd/snap-failure"
+  install -Dm755 "$srcdir/go/bin/snap-update-ns" "$pkgdir/usr/lib/snapd/snap-update-ns"
+  install -Dm755 "$srcdir/go/bin/snap-exec" "$pkgdir/usr/lib/snapd/snap-exec"
+  # Ensure /usr/bin/snapctl is a symlink to /usr/libexec/snapd/snapctl
   ln -s /usr/lib/snapd/snapctl "$pkgdir/usr/bin/snapctl"
 
   # pre-create directories
@@ -135,23 +165,24 @@ package() {
   install -dm755 "$pkgdir/var/lib/snapd/seccomp/bpf"
   install -dm755 "$pkgdir/var/lib/snapd/snap/bin"
   install -dm755 "$pkgdir/var/lib/snapd/snaps"
+  install -dm755 "$pkgdir/var/lib/snapd/inhibit"
   install -dm755 "$pkgdir/var/lib/snapd/lib/gl"
   install -dm755 "$pkgdir/var/lib/snapd/lib/gl32"
   install -dm755 "$pkgdir/var/lib/snapd/lib/vulkan"
   install -dm755 "$pkgdir/var/lib/snapd/lib/glvnd"
   # these dirs have special permissions
-  install -dm000 "$pkgdir/var/lib/snapd/void"
+  install -dm111 "$pkgdir/var/lib/snapd/void"
   install -dm700 "$pkgdir/var/lib/snapd/cookie"
   install -dm700 "$pkgdir/var/lib/snapd/cache"
 
   make -C cmd install DESTDIR="$pkgdir/"
 
   # Install man file
-  mkdir -p "$pkgdir/usr/share/man/man1"
-  "$GOPATH/bin/snap" help --man > "$pkgdir/usr/share/man/man1/snap.1"
+  mkdir -p "$pkgdir/usr/share/man/man8"
+  "$srcdir/go/bin/snap" help --man > "$pkgdir/usr/share/man/man8/snap.8"
 
   # Install the "info" data file with snapd version
-  install -m 644 -D "$GOPATH/src/${_gourl}/data/info" \
+  install -m 644 -D "$srcdir/go/src/${_gourl}/data/info" \
           "$pkgdir/usr/lib/snapd/info"
 
   # Remove snappy core specific units
@@ -166,8 +197,4 @@ package() {
 
   # add /snap symlink
   ln -s /var/lib/snapd/snap "$pkgdir/snap"
-
-  # fix some permissions
-  chmod 0750 "$pkgdir/etc/sudoers.d"
-  chmod 0440 "$pkgdir/etc/sudoers.d/99-snapd.conf"
 }
