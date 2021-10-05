@@ -14,7 +14,7 @@ optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
 pkgver=2.51.3
 pkgrel=2
-arch=('x86_64')
+arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
 makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'python-docutils' 'apparmor')
