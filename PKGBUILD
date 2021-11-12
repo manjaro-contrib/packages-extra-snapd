@@ -12,8 +12,8 @@ pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
-pkgver=2.51.3
-pkgrel=2
+pkgver=2.53.1
+pkgrel=1
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -21,10 +21,8 @@ makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'p
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
-source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
-        "0001-snap-squashfs-handle-squashfs-tools-4.5.patch")
-sha256sums=('67d3701b52484d7dba9c7b122752429eafbb20a0182966dd44ab1b1f6c1b780e'
-            '8142631da873d49d9b7d32b78afcededf347199f9f42161b88213f9aef33ab82')
+source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+sha256sums=('a637c52f7a961ae9e53e1ebc7204e0942f0ade9ada66327235cd346295d4c62b')
 
 _gourl=github.com/snapcore/snapd
 
