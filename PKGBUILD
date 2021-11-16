@@ -1,5 +1,5 @@
 # Maintainer: Philip Müller <philm at manjaro dot org>
-# Maintainer: Helmut Stult <helmut at manjaro dot org>
+# Contributor: Helmut Stult
 
 # Arch credits:
 # Contributor: aimileus <me at aimileus dot nl>
@@ -12,7 +12,7 @@ pkgdesc="Service and tools for management of snap packages."
 depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
-pkgver=2.53.1
+pkgver=2.53.2
 pkgrel=1
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -22,7 +22,7 @@ conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
 source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('a637c52f7a961ae9e53e1ebc7204e0942f0ade9ada66327235cd346295d4c62b')
+sha256sums=('41a652365a76c812e0c795457ee3e96463a4350787143b2c60161edbfa296109')
 
 _gourl=github.com/snapcore/snapd
 
