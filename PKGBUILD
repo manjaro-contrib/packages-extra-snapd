@@ -13,7 +13,7 @@ depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
 pkgver=2.53.2
-pkgrel=1
+pkgrel=2
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL3')
@@ -21,7 +21,7 @@ makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'p
 conflicts=('snap-confine')
 options=('!strip' 'emptydirs')
 install=snapd.install
-source=("$pkgname-$pkgver.tar.xz::https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+source=("https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
 sha256sums=('41a652365a76c812e0c795457ee3e96463a4350787143b2c60161edbfa296109')
 
 _gourl=github.com/snapcore/snapd
@@ -39,11 +39,11 @@ prepare() {
   ln --no-target-directory -fs "$srcdir/$pkgname-$pkgver" "$GOPATH/src/${_gourl}"
 
   for name in "${source[@]}"; do
-      if [[ "${name%.patch}" == "$name" ]]; then
-          # not a patch
-          continue
-      fi
-      msg2 "applying $name"
+    if [[ "${name%.patch}" == "$name" ]]; then
+      # not a patch
+      continue
+    fi
+      echo "applying $name"
       patch -p1 -i "$srcdir/$name"
   done
 }
@@ -71,8 +71,8 @@ build() {
   # because argument expansion with quoting in bash is hard, and -ldflags=-extldflags='-foo'
   # is not exactly the same as -ldflags "-extldflags '-foo'" use the array trick
   # to pass exactly what we want
-  flags=(-buildmode=pie -ldflags "-s -linkmode external -extldflags '$LDFLAGS'" -trimpath)
-  staticflags=(-buildmode=pie -ldflags "-s -linkmode external -extldflags '$LDFLAGS -static'" -trimpath)
+  flags=(-buildmode=pie -ldflags "-w -s -linkmode external -extldflags '$LDFLAGS'" -trimpath)
+  staticflags=(-buildmode=pie -ldflags "-w -s -linkmode external -extldflags '$LDFLAGS -static'" -trimpath)
   # Build/install snap and snapd
   go build "${flags[@]}" -o "$srcdir/go/bin/snap" $GOFLAGS_SNAP "${_gourl}/cmd/snap"
   go build "${flags[@]}" -o "$srcdir/go/bin/snapd" $GOFLAGS "${_gourl}/cmd/snapd"
@@ -86,11 +86,11 @@ build() {
   # Generate data files such as real systemd units, dbus service, environment
   # setup helpers out of the available templates
   make -C data \
-       BINDIR=/bin \
-       LIBEXECDIR=/usr/lib \
-       SYSTEMDSYSTEMUNITDIR=/usr/lib/systemd/system \
-       SNAP_MOUNT_DIR=/var/lib/snapd/snap \
-       SNAPD_ENVIRONMENT_FILE=/etc/default/snapd
+     BINDIR=/bin \
+     LIBEXECDIR=/usr/lib \
+     SYSTEMDSYSTEMUNITDIR=/usr/lib/systemd/system \
+     SNAP_MOUNT_DIR=/var/lib/snapd/snap \
+     SNAPD_ENVIRONMENT_FILE=/etc/default/snapd
 
   cd cmd
   autoreconf -i -f
@@ -105,16 +105,16 @@ build() {
 }
 
 check() {
-    export GOPATH="$srcdir/go"
-    cd "$srcdir/go/src/${_gourl}"
+  export GOPATH="$srcdir/go"
+  cd "$srcdir/go/src/${_gourl}"
 
-    # make sure the binaries that need to be built statically really are
-    for binary in snap-exec snap-update-ns snapctl; do
-        if ! LC_ALL=C ldd "$srcdir/go/bin/$binary" 2>&1 | grep -q 'not a dynamic executable'; then
-            echo "$binary is not a static binary"
-            exit 1
-        fi
-    done
+  # make sure the binaries that need to be built statically really are
+  for binary in snap-exec snap-update-ns snapctl; do
+    if ! LC_ALL=C ldd "$srcdir/go/bin/$binary" 2>&1 | grep -q 'not a dynamic executable'; then
+      echo "$binary is not a static binary"
+      exit 1
+    fi
+  done
 }
 
 package() {
@@ -142,6 +142,7 @@ package() {
      SYSTEMDSYSTEMUNITDIR=/usr/lib/systemd/system \
      SNAP_MOUNT_DIR=/var/lib/snapd/snap \
      DESTDIR="$pkgdir"
+
   # no tweaks for sudo are needed
   rm -rfv "$pkgdir/etc/sudoers.d"
 
@@ -192,7 +193,7 @@ package() {
 
   # Install the "info" data file with snapd version
   install -m 644 -D "$srcdir/go/src/${_gourl}/data/info" \
-          "$pkgdir/usr/lib/snapd/info"
+    "$pkgdir/usr/lib/snapd/info"
 
   # Remove snappy core specific units
   rm -fv "$pkgdir/usr/lib/systemd/system/snapd.system-shutdown.service"
