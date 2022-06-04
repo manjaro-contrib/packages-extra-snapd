@@ -8,7 +8,7 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.55.5
+pkgver=2.56
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
@@ -18,9 +18,10 @@ depends=('squashfs-tools' 'libseccomp' 'libsystemd' 'apparmor')
 makedepends=('git' 'go' 'go-tools' 'libseccomp' 'libcap' 'systemd' 'xfsprogs' 'python-docutils' 'apparmor')
 optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
+options=('!lto')
 install=snapd.install
 source=("https://github.com/snapcore/${pkgname}/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('7cea26a599621e440af4b5729468c4c3de7145f8e17a495a7c33935cc89777af')
+sha256sums=('33f4d7421dfe6a19cefb9b937d8d64599a1d079c6bf2214b146c148ff6fe2fff')
 
 _gourl=github.com/snapcore/snapd
 
