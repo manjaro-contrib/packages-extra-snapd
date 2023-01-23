@@ -8,7 +8,7 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.58
+pkgver=2.58.1
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
@@ -21,7 +21,7 @@ optdepends=('bash-completion: bash completion support'
 options=('!lto')
 install=snapd.install
 source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('ef3905ba1b27cae409e961db9d5fdfeba17a9b97196e2fe936a9af096561265a')
+sha256sums=('50569cf0d435850f6a5e495d6db9f6257ff1f67c61b0f1baa3d52f2938907393')
 
 _gourl=github.com/snapcore/snapd
 
@@ -63,7 +63,7 @@ build() {
   export CGO_CXXFLAGS="${CXXFLAGS}"
   export CGO_LDFLAGS="${LDFLAGS}"
 
-  ./mkversion.sh $pkgver-$pkgrel
+  ./mkversion.sh "$pkgver"
 
   # because argument expansion with quoting in bash is hard, and -ldflags=-extldflags='-foo'
   # is not exactly the same as -ldflags "-extldflags '-foo'" use the array trick
