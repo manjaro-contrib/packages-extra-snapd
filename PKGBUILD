@@ -9,7 +9,7 @@
 
 pkgname=snapd
 pkgver=2.59.5
-pkgrel=1
+pkgrel=2
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -20,8 +20,10 @@ optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
 options=('!lto')
 install=snapd.install
-source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('d2d9efbc2db7fa79edf0c73286320ab5ba039ae30874e88725ef326c618ae5df')
+source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
+        'https://github.com/snapcore/snapd/pull/12845.patch')
+sha256sums=('d2d9efbc2db7fa79edf0c73286320ab5ba039ae30874e88725ef326c618ae5df'
+            'f93076dd642740e910ea0047b75ab9075ee18d2fa5a77d4cbc7356a7159356c3')
 
 _gourl=github.com/snapcore/snapd
 
@@ -37,14 +39,8 @@ prepare() {
   mkdir -p "$(dirname "$GOPATH/src/${_gourl}")"
   ln --no-target-directory -fs "$srcdir/$pkgname-$pkgver" "$GOPATH/src/${_gourl}"
 
-  for name in "${source[@]}"; do
-    if [[ "${name%.patch}" == "$name" ]]; then
-      # not a patch
-      continue
-    fi
-      echo "applying $name"
-      patch -p1 -i "$srcdir/$name"
-  done
+  # snap-confine: add tmpfs mount rule to apparmor profile
+  patch -Np1 -i ../12845.patch
 }
 
 build() {
