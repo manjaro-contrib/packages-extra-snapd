@@ -8,8 +8,8 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.59.5
-pkgrel=2
+pkgver=2.60
+pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -20,10 +20,8 @@ optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
 options=('!lto')
 install=snapd.install
-source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
-        'https://github.com/snapcore/snapd/pull/12845.patch')
-sha256sums=('d2d9efbc2db7fa79edf0c73286320ab5ba039ae30874e88725ef326c618ae5df'
-            'f93076dd642740e910ea0047b75ab9075ee18d2fa5a77d4cbc7356a7159356c3')
+source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+sha256sums=('1d940ba7cee1b6a1fd961c591abf8fdde9d313eff0fb8b6967ad01f40426f33e')
 
 _gourl=github.com/snapcore/snapd
 
@@ -38,9 +36,6 @@ prepare() {
   # above describes.
   mkdir -p "$(dirname "$GOPATH/src/${_gourl}")"
   ln --no-target-directory -fs "$srcdir/$pkgname-$pkgver" "$GOPATH/src/${_gourl}"
-
-  # snap-confine: add tmpfs mount rule to apparmor profile
-  patch -Np1 -i ../12845.patch
 }
 
 build() {
