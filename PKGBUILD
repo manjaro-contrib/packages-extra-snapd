@@ -9,7 +9,7 @@
 
 pkgname=snapd
 pkgver=2.60
-pkgrel=1
+pkgrel=2
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -189,4 +189,9 @@ package() {
   rm -fv "$pkgdir/usr/lib/snapd/snapd.core-fixup.sh"
   rm -fv "$pkgdir/usr/bin/ubuntu-core-launcher"
   rm -fv "$pkgdir/usr/lib/snapd/system-shutdown"
+
+  # Remove prompt services
+  rm -fv "$pkgdir/usr/lib/systemd/system/snapd.aa-prompt-listener.service"
+  rm -fv "$pkgdir/usr/lib/systemd/user/snapd.aa-prompt-ui.service"
+  rm -fv "$pkgdir/usr/share/dbus-1/services/io.snapcraft.Prompt.service"
 }
