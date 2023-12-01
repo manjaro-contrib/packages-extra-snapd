@@ -8,7 +8,7 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.61
+pkgver=2.61.1
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
@@ -20,7 +20,7 @@ optdepends=('bash-completion: bash completion support'
             'xdg-desktop-portal: desktop integration')
 install=snapd.install
 source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('af30dc20c09872bf42faedb8f5306abc85faf9e3b010cb2388086cbc42a0909a')
+sha256sums=('775b7a250f5241b3bfcebcb3df5055b9c9304c4520502b7abf12438a1cdd771d')
 
 _gourl=github.com/snapcore/snapd
 
