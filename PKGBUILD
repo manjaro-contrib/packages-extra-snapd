@@ -1,26 +1,41 @@
 # Maintainer: Philip Müller <philm at manjaro dot org>
+# Maintainer: Mark Wagie <mark at manjaro dot org>
 # Contributor: Helmut Stult
-
-# Arch credits:
 # Contributor: aimileus <me at aimileus dot nl>
 # Contributor: Maciej Borzecki <maciek.borzecki@gmail.com>
 # Contributor: Timothy Redaelli <timothy.redaelli@gmail.com>
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.61.3
+pkgver=2.62
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
 license=('GPL-3.0-or-later')
-depends=('apparmor' 'libseccomp' 'libsystemd' 'squashfs-tools')
-makedepends=('autoconf-archive' 'git' 'go' 'go-tools' 'libcap' 'python-docutils' 'systemd' 'xfsprogs')
-optdepends=('bash-completion: bash completion support'
-            'xdg-desktop-portal: desktop integration')
+depends=(
+  'apparmor'
+  'libseccomp'
+  'squashfs-tools'
+  'systemd-libs'
+)
+makedepends=(
+  'autoconf-archive'
+  'git'
+  'go'
+  'go-tools'
+  'libcap'
+  'python-docutils'
+  'systemd'
+  'xfsprogs'
+)
+optdepends=(
+  'bash-completion: bash completion support'
+  'xdg-desktop-portal: desktop integration'
+)
 install=snapd.install
 source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('90d427ca0a0e1306e647c6091176fba678522e2af04228aa274a34d011c82123')
+sha256sums=('e4bcf0d7677afdcb7256958fd382a5aad71db13474c08e5828e913614ee88ea8')
 
 _gourl=github.com/snapcore/snapd
 
