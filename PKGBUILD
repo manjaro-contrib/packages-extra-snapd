@@ -8,7 +8,7 @@
 
 pkgname=snapd
 pkgver=2.62
-pkgrel=1
+pkgrel=2
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
