@@ -8,7 +8,7 @@
 
 pkgname=snapd
 pkgver=2.62
-pkgrel=2
+pkgrel=3
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -34,8 +34,10 @@ optdepends=(
   'xdg-desktop-portal: desktop integration'
 )
 install=snapd.install
-source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('e4bcf0d7677afdcb7256958fd382a5aad71db13474c08e5828e913614ee88ea8')
+source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
+        '0001-cmd-snap-seccomp-define-GNU_SOURCE-for-fallocate.patch')
+sha256sums=('e4bcf0d7677afdcb7256958fd382a5aad71db13474c08e5828e913614ee88ea8'
+            'f96cb34620105ae654f84296b8bbbc938608ff117dc987fbe1274f61681e333f')
 
 _gourl=github.com/snapcore/snapd
 
@@ -50,6 +52,8 @@ prepare() {
   # above describes.
   mkdir -p "$(dirname "$GOPATH/src/${_gourl}")"
   ln --no-target-directory -fs "$srcdir/$pkgname-$pkgver" "$GOPATH/src/${_gourl}"
+
+  patch -Np1 -i ../0001-cmd-snap-seccomp-define-GNU_SOURCE-for-fallocate.patch
 }
 
 build() {
