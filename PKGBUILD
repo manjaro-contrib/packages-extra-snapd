@@ -7,8 +7,8 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.62
-pkgrel=3
+pkgver=2.63
+pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/snapcore/snapd"
@@ -36,7 +36,7 @@ optdepends=(
 install=snapd.install
 source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
         '0001-cmd-snap-seccomp-define-GNU_SOURCE-for-fallocate.patch')
-sha256sums=('e4bcf0d7677afdcb7256958fd382a5aad71db13474c08e5828e913614ee88ea8'
+sha256sums=('2f0083d2c4e087c29f48cd1abb8a92eb2e63cf04cd433256c86fac05d0b28cab'
             'f96cb34620105ae654f84296b8bbbc938608ff117dc987fbe1274f61681e333f')
 
 _gourl=github.com/snapcore/snapd
