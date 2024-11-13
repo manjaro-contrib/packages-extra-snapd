@@ -7,7 +7,7 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.65.1
+pkgver=2.66.1
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
@@ -16,8 +16,8 @@ license=('GPL-3.0-or-later')
 depends=(
   'apparmor'
   'libseccomp'
+  'libsystemd'
   'squashfs-tools'
-  'systemd-libs'
 )
 makedepends=(
   'autoconf-archive'
@@ -35,7 +35,7 @@ optdepends=(
 )
 install=snapd.install
 source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('826f8fa8021400326c7be40ea2d45c2d3f80288b41effba21cd5677fde5c2db0')
+sha256sums=('5fa662062562443b2a005ed1aad359d6cc0c74ffbb555af701a4c1f510896b7b')
 
 prepare() {
   cd "$pkgname-$pkgver"
@@ -102,6 +102,8 @@ __DEFINES__
   autoreconf -i -f
   ./configure \
     --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
     --libexecdir=/usr/lib/snapd \
     --with-snap-mount-dir=/var/lib/snapd/snap \
     --enable-apparmor \
