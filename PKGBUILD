@@ -11,7 +11,7 @@ pkgver=2.66.1
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
-url="https://github.com/snapcore/snapd"
+url="https://github.com/canonical/snapd"
 license=('GPL-3.0-or-later')
 depends=(
   'apparmor'
@@ -34,7 +34,7 @@ optdepends=(
   'xdg-desktop-portal: desktop integration'
 )
 install=snapd.install
-source=("https://github.com/snapcore/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
 sha256sums=('5fa662062562443b2a005ed1aad359d6cc0c74ffbb555af701a4c1f510896b7b')
 
 prepare() {
