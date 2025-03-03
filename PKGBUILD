@@ -7,8 +7,8 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.67
-pkgrel=2
+pkgver=2.68
+pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/canonical/snapd"
@@ -34,10 +34,8 @@ optdepends=(
   'xdg-desktop-portal: desktop integration'
 )
 install=snapd.install
-source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
-        "0001-data-packaging-separate-check-and-implicit-build-mak.patch")
-sha256sums=('8c069713bb3a62201d64cec795c247e006673914f92b0bef3add0e5ff379716f'
-            '42b88779ea191ad803041440863c79daa11c2f98ae23d7097d238b3831511268')
+source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
+sha256sums=('317166b18e6b87a1fb24c45b96bc3c0040072ab31a99252db622245ac271dbb2')
 
 prepare() {
   cd "$pkgname-$pkgver"
