@@ -8,7 +8,7 @@
 
 pkgname=snapd
 pkgver=2.70
-pkgrel=1
+pkgrel=2
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/canonical/snapd"
@@ -35,7 +35,7 @@ optdepends=(
 )
 install=snapd.install
 source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('208c4356e17e96f25f8e5d4cc9c5494157099d15c091a530bb4f260aae9cf88b')
+sha256sums=('4092c7e02d9d03c4c3c0546a0cddcff288ffffe484cd872f7df7565ab1428dbf')
 
 prepare() {
   cd "$pkgname-$pkgver"
