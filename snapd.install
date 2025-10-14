@@ -1,5 +1,5 @@
 _set_snap_confine_caps() {
-  /usr/bin/setcap -q - /usr/lib/snapd/snap-confine < /usr/lib/snapd/snap-confine.caps
+  /usr/bin/setcap -q - /usr/lib/snapd/snap-confine < /usr/lib/snapd/snap-confine.v2-only.caps
 }
 
 post_install() {
@@ -38,5 +38,4 @@ post_upgrade() {
 }
 
 # vim:set ts=2 sw=2 et:
-
 
