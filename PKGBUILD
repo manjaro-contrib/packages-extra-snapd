@@ -7,7 +7,7 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.73
+pkgver=2.74.1
 pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
@@ -36,7 +36,7 @@ optdepends=(
 )
 install=snapd.install
 source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('c47fe0c00df5e153b312b5f6dabec49158c8c872ed1eae5e342229bb229a5d85')
+sha256sums=('126f41aba651ec36c1d946b389687d937d3e96489b683cffdc4f37bd9deb1d46')
 
 prepare() {
   cd "$pkgname-$pkgver"
