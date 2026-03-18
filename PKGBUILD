@@ -8,7 +8,7 @@
 
 pkgname=snapd
 pkgver=2.74.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/canonical/snapd"
@@ -35,8 +35,10 @@ optdepends=(
   'xdg-desktop-portal: desktop integration'
 )
 install=snapd.install
-source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('126f41aba651ec36c1d946b389687d937d3e96489b683cffdc4f37bd9deb1d46')
+source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
+        '0001-data-more-precise-prune-pattern-for-tmpfiles.patch')
+sha256sums=('126f41aba651ec36c1d946b389687d937d3e96489b683cffdc4f37bd9deb1d46'
+            'e555871200973bf12e00fc88b6557554ff7e6777d24054660e9a14d2117aa6d9')
 
 prepare() {
   cd "$pkgname-$pkgver"
@@ -46,7 +48,7 @@ prepare() {
       # not a patch
       continue
     fi
-    msg2 "applying $name"
+    echo "applying $name"
     patch -p1 -i "$srcdir/$name"
   done
 }
@@ -184,4 +186,3 @@ package() {
   # Remove gpio-chardev ordering target
   rm -fv "$pkgdir/usr/lib/systemd/system/snapd.gpio-chardev-setup.target"
 }
-
