@@ -7,8 +7,8 @@
 # Contributor: Zygmunt Krynicki <me at zygoon dot pl>
 
 pkgname=snapd
-pkgver=2.74.1
-pkgrel=2
+pkgver=2.75.2
+pkgrel=1
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/canonical/snapd"
@@ -17,15 +17,14 @@ depends=(
   'apparmor'
   'libcap'
   'libseccomp'
-  'libsystemd'
   'squashfs-tools'
+  'systemd-libs'
 )
 makedepends=(
   'autoconf-archive'
   'git'
   'go'
   'go-tools'
-  'm4'
   'python-docutils'
   'systemd'
   'xfsprogs'
@@ -34,11 +33,9 @@ optdepends=(
   'bash-completion: bash completion support'
   'xdg-desktop-portal: desktop integration'
 )
-install=snapd.install
-source=("https://github.com/canonical/snapd/releases/download/${pkgver}/${pkgname}_${pkgver}.vendor.tar.xz"
-        '0001-data-more-precise-prune-pattern-for-tmpfiles.patch')
-sha256sums=('126f41aba651ec36c1d946b389687d937d3e96489b683cffdc4f37bd9deb1d46'
-            'e555871200973bf12e00fc88b6557554ff7e6777d24054660e9a14d2117aa6d9')
+install="$pkgname.install"
+source=("https://github.com/canonical/snapd/releases/download/$pkgver/${pkgname}_${pkgver}.vendor.tar.xz")
+sha256sums=('b59998e0e7f2b683d04999d968ef29f9b9933cdb2c85ffc83cf1505bc3efccf1')
 
 prepare() {
   cd "$pkgname-$pkgver"
@@ -121,8 +118,8 @@ check() {
 
   # make sure the binaries that need to be built statically really are
   for binary in snap-exec snap-update-ns snapctl; do
-    if ! LC_ALL=C ldd "$srcdir/_go_build/$binary" 2>&1 | grep -q 'not a dynamic executable'; then
-      echo "$binary is not a static binary"
+    if ! LC_ALL=C ldd "$srcdir/_go_build/${binary}" 2>&1 | grep -q 'not a dynamic executable'; then
+      echo "${binary} is not a static binary"
       exit 1
     fi
   done
