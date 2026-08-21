@@ -8,7 +8,7 @@
 
 pkgname=snapd
 pkgver=2.76.2
-pkgrel=1
+pkgrel=2
 pkgdesc="Service and tools for management of snap packages."
 arch=('x86_64' 'aarch64')
 url="https://github.com/canonical/snapd"
@@ -34,8 +34,10 @@ optdepends=(
   'xdg-desktop-portal: desktop integration'
 )
 install="$pkgname.install"
-source=("https://github.com/canonical/snapd/releases/download/$pkgver/${pkgname}_${pkgver}.vendor.tar.xz")
-sha256sums=('873fedb8525057c2b276003c2f90c2e5f7b541ec1bb409a6f489c51b5c72af2b')
+source=("https://github.com/canonical/snapd/releases/download/$pkgver/${pkgname}_${pkgver}.vendor.tar.xz"
+        '0001-tests-fix-json-error-assertions-for-Go-1.27-17472.patch')
+sha256sums=('873fedb8525057c2b276003c2f90c2e5f7b541ec1bb409a6f489c51b5c72af2b'
+            '0a091ec38ffbe653db698a96ae3486233746711da138e2e5793cff97b523f3f2')
 
 prepare() {
   cd "$pkgname-$pkgver"
